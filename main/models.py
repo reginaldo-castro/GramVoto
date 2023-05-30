@@ -1,46 +1,48 @@
 from django.db import models, IntegrityError
-
-
-class Candidate(models.Model):
+from django.contrib.auth.models import User
+1
+class Candidato(models.Model):
     name = models.CharField(max_length=250)
-    no_challenges_solved = models.IntegerField()
     votes = models.IntegerField(default=0)
-    python_rating = models.IntegerField(default=1)
-    dsa_rating = models.IntegerField(default=1)
-    cplus_rating = models.IntegerField(default=1)
-    java_rating = models.IntegerField(default=1)
-
+    matricula = models.CharField(max_length=4)
+    numero = models.CharField(max_length=2)
+    
     def __str__(self):
         return self.name
 
 
-class Vote(models.Model):
+class Voto(models.Model):
     ip_address = models.CharField(
         max_length=50,
         default="None",
         unique=True
     )
-    candidate = models.ForeignKey(
-        to=Candidate,
+    candidato = models.ForeignKey(
+        to=Candidato,
         on_delete=models.CASCADE,
-        related_name='vote'
+        related_name='voto'
+    )
+    eleitor = models.CharField(
+        max_length=100,
+        default="None",
+        unique=True
     )
 
     def save(self, commit=True, *args, **kwargs):
 
         if commit:
             try:
-                self.candidate.votes += 1
-                self.candidate.save()
-                super(Vote, self).save(*args, **kwargs)
+                self.candidato.votes += 1
+                self.candidato.save()
+                super(Voto, self).save(*args, **kwargs)
 
             except IntegrityError:
-                self.candidate.votes -= 1
-                self.candidate.save()
+                self.candidato.votes -= 1
+                self.candidato.save()
                 raise IntegrityError
 
         else:
             raise IntegrityError
 
     def __str__(self):
-        return self.candidate.name
+        return self.candidato.name

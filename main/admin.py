@@ -1,13 +1,13 @@
 from django.contrib import admin
 
-from main.models import Candidate, Vote
+from main.models import Candidato, Voto
 
 
-@admin.register(Candidate)
+@admin.register(Candidato)
 class CandidateAdmin(admin.ModelAdmin):
-    list_display = ["name", "votes"]
+    list_display = ["name", "matricula", "numero"]
 
 
-@admin.register(Vote)
+@admin.register(Voto)
 class VoteAdmin(admin.ModelAdmin):
-    list_display = ["candidate", "ip_address"]
+    list_display = ["candidato", "ip_address"]

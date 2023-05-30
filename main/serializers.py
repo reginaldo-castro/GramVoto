@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from main.models import Candidate, Vote
+from main.models import Candidato, Voto
+from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 
@@ -8,23 +9,26 @@ class CandidateSerializer(serializers.ModelSerializer):
     votes = serializers.ReadOnlyField()
 
     class Meta:
-        model = Candidate
+        model = Candidato
         fields = "__all__"
 
 
 class VoteSerializer(serializers.ModelSerializer):
-    candidate_name = serializers.CharField()
-
+    candidato_name = serializers.CharField()
+    #eleitor_name = serializers.CharField()
     def create(self, validated_data):
-        candidate = get_object_or_404(Candidate, name=validated_data["candidate_name"])
-        vote = Vote()
-        vote.candidate = candidate
+        #eleitor = get_object_or_404(Candidato, name=validated_data["eleitor_name"])
+        candidato = get_object_or_404(Candidato, name=validated_data["candidato_name"])
+        voto = Voto()
+        #voto.eleitor = eleitor
+        voto.candidato = candidato
+        
         try:
-            vote.save(commit=False)
+            voto.save(commit=False)
         except IntegrityError:
-            return vote
-        return vote
+            return voto
+        return voto
 
     class Meta:
-        model = Vote
-        exclude = ("id", "ip_address", "candidate")
+        model = Voto
+        exclude = ("id", "ip_address", "candidato")
